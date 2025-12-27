@@ -6,11 +6,35 @@ export default function Home() {
   const [word, setWord] = useState("");
   const [result, setResult] = useState<string | null>(null);
 
+const [allowPlurals, setAllowPlurals] = useState(true);
+const [allowShortWords, setAllowShortWords] = useState(false);
+
 async function checkWord() {
   if (!word) return;
 
-  const response = await fetch(`/api/check?word=${word}`);
+  const response = await fetch(
+  `/api/check?word=${word}&plurals=${allowPlurals}&short=${allowShortWords}`
+);
   const data = await response.json();
+<div style={{ marginTop: "16px", fontSize: "14px" }}>
+  <label>
+    <input
+      type="checkbox"
+      checked={allowPlurals}
+      onChange={() => setAllowPlurals(!allowPlurals)}
+    />{" "}
+    Allow plurals
+  </label>
+  <br />
+  <label>
+    <input
+      type="checkbox"
+      checked={allowShortWords}
+      onChange={() => setAllowShortWords(!allowShortWords)}
+    />{" "}
+    Allow words under 3 letters
+  </label>
+</div>
 
   setResult(data.valid ? "valid" : "invalid");
 }
@@ -30,7 +54,7 @@ async function checkWord() {
         🍌 Word Checker
       </h1>
 
-      <p style={{ fontSize: "14px", color: "#555", marginBottom: "24px" }}>
+      <p style={{ fontSize: "14px", color: "#000000ff", marginBottom: "24px" }}>
         Unofficial Bananagrams tool
       </p>
 
@@ -44,6 +68,7 @@ async function checkWord() {
           width: "90%",
           maxWidth: "320px",
           textAlign: "center",
+          border: "2px solid #000"
           marginBottom: "12px"
         }}
       />
@@ -55,8 +80,8 @@ async function checkWord() {
           width: "90%",
           maxWidth: "320px",
           fontSize: "18px",
-          background: "black",
-          color: "white",
+          background: "#000",
+          color: "#fff",
           border: "none",
           cursor: "pointer"
         }}
@@ -74,7 +99,7 @@ async function checkWord() {
       {result.valid ? "✅ Valid Word" : "❌ Invalid Word"}
     </p>
     {result.definition && (
-      <p style={{ fontSize: "16px", color: "#555", marginTop: "8px" }}>
+      <p style={{ fontSize: "16px", color: "#000000ff", marginTop: "8px" }}>
         {result.definition}
       </p>
     )}
@@ -84,7 +109,7 @@ async function checkWord() {
       <p style={{
         marginTop: "40px",
         fontSize: "12px",
-        color: "#777",
+        color: "#000000ff",
         textAlign: "center",
         maxWidth: "300px"
       }}>

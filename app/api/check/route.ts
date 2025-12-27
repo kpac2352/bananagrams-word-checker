@@ -4,18 +4,12 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-// Load words
 const words = new Set(
   fs
     .readFileSync(path.join(process.cwd(), "lib", "words.txt"), "utf-8")
     .split("\n")
     .map(w => w.trim().toLowerCase())
     .filter(Boolean)
-);
-
-// Load definitions
-const definitions: Record<string, string> = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "lib", "definitions.json"), "utf-8")
 );
 
 export async function GET(request: Request) {
@@ -27,9 +21,33 @@ export async function GET(request: Request) {
   }
 
   const valid = words.has(word);
+
+  let definition = null;
+
+  if (valid) {
+    try {
+      const res = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+      );
+      const data = await res.json();
+      definition = data?.[0]?.meanings?.[0]?.definitions?.[0]?.definition ?? null;
+    } catch {
+      definition = null;
+    }
+  }
+const allowPlurals = searchParams.get("plurals") === "true";
+const allowShort = searchParams.get("short") === "true";
+
+if (!allowShort && word.length < 3) {
+  return NextResponse.json({ word, valid: false });
+}
+
+if (!allowPlurals && word.endsWith("s")) {
+  return NextResponse.json({ word, valid: false });
+}
   return NextResponse.json({
     word,
     valid,
-    definition: valid ? definitions[word] || null : null
+    definition
   });
 }
