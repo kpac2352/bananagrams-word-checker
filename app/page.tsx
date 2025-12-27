@@ -64,15 +64,22 @@ async function checkWord() {
         Check Word
       </button>
 
-      {result && (
-        <p style={{
-          marginTop: "24px",
-          fontSize: "22px",
-          color: result === "valid" ? "green" : "red"
-        }}>
-          {result === "valid" ? "✅ Valid Word" : "❌ Invalid Word"}
-        </p>
-      )}
+{result && (
+  <div style={{ marginTop: "24px", textAlign: "center" }}>
+    <p style={{
+      fontSize: "22px",
+      color: result.valid ? "green" : "red",
+      fontWeight: "bold"
+    }}>
+      {result.valid ? "✅ Valid Word" : "❌ Invalid Word"}
+    </p>
+    {result.definition && (
+      <p style={{ fontSize: "16px", color: "#555", marginTop: "8px" }}>
+        {result.definition}
+      </p>
+    )}
+  </div>
+)}
 
       <p style={{
         marginTop: "40px",
